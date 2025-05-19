@@ -3,11 +3,43 @@ import pickle
 import pandas as pd
 import os
 import zipfile
+import requests
 
-import urllib.request
-url = 'https://drive.google.com/file/d/1SUWrKamPl2fEj_cLyy9XCKt_vkOKdnFM/view?usp=drive_link'
-urllib.request.urlretrieve(url, 'diabetes_model.pkl')
+def download_file_from_google_drive(id, destination):
+    URL = "https://docs.google.com/uc?export=download"
+    session = requests.Session()
+    
+    response = session.get(URL, params={'id': id}, stream=True)
+    token = get_confirm_token(response)
 
+    if token:
+        params = {'id': id, 'confirm': token}
+        response = session.get(URL, params=params, stream=True)
+
+    save_response_content(response, destination)
+
+def get_confirm_token(response):
+    for key, value in response.cookies.items():
+        if key.startswith('download_warning'):
+            return value
+    return None
+
+def save_response_content(response, destination):
+    CHUNK_SIZE = 32768
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(CHUNK_SIZE):
+            if chunk:
+                f.write(chunk)
+
+# Itt add meg a Google Drive fájl azonosítóját (file ID)
+file_id = '1p1I98h3k36hGyZtRR_Sim0psqYstE74g'  # ezt a linkből kell kivenni
+
+# Töltsd le, ha még nincs meg a fájl
+import os
+if not os.path.exists('diabetes_model.pkl'):
+    download_file_from_google_drive(file_id, 'diabetes_model.pkl')
+
+# Modell betöltése
 with open("diabetes_model.pkl", "rb") as f:
     model, feature_names = pickle.load(f)
 
