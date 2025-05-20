@@ -53,26 +53,26 @@ le_smoking = encoders[1]
 le_hypertension = encoders[2] if len(encoders) > 2 else None
 le_heart_disease = encoders[3] if len(encoders) > 2 else None
 
-st.title("Diabétesz Előrejelző Webalkalmazás")
+st.title("Cukorbetegság előrejelzés")
 
 # Felhasználói bemenetek
 gender = st.selectbox("Nem:", le_gender.classes_)
-smoking = st.selectbox("Dohányzás történet:", le_smoking.classes_)
+smoking = st.selectbox("Dohányzás előfordulása:", le_smoking.classes_)
 
 if le_hypertension is not None:
-    hypertension_input = st.selectbox("Magas vérnyomás:", le_hypertension.classes_)
+    hypertension_input = st.selectbox("Magas vérnyomás van-e:", le_hypertension.classes_)
 else:
-    hypertension_input = st.selectbox("Magas vérnyomás:", ["nem", "igen"])  # vagy default bináris
+    hypertension_input = st.selectbox("Magas vérnyomás van-e:", ["nem", "igen"])  # vagy default bináris
 
 if le_heart_disease is not None:
-    heart_disease_input = st.selectbox("Szívbetegség:", le_heart_disease.classes_)
+    heart_disease_input = st.selectbox("Szívbetegség van-e:", le_heart_disease.classes_)
 else:
-    heart_disease_input = st.selectbox("Szívbetegség:", ["nem", "igen"])  # vagy default bináris
+    heart_disease_input = st.selectbox("Szívbetegség van-e:", ["nem", "igen"])  # vagy default bináris
 
 age = st.slider("Életkor:", 0, 100, 25)
-bmi = st.number_input("BMI:", min_value=10.0, max_value=60.0, value=22.5)
-hba1c = st.number_input("HbA1c szint:", min_value=3.0, max_value=15.0, value=5.5)
-blood_glucose = st.number_input("Vércukorszint:", min_value=50.0, max_value=300.0, value=100.0)
+bmi = st.number_input("BMI (min:10,max:60):", min_value=10.0, max_value=60.0, value=22.5)
+hba1c = st.number_input("HbA1c szint (min:3,max:15):", min_value=3.0, max_value=15.0, value=5.5)
+blood_glucose = st.number_input("Vércukorszint (min:50,max:300):", min_value=50.0, max_value=300.0, value=100.0)
 
 if st.button("Előrejelzés"):
     # Kategóriák kódolása
@@ -111,4 +111,4 @@ if st.button("Előrejelzés"):
     if prediction == 1:
         st.error("Cukorbetegség lehetséges")
     else:
-        st.success("Nincs valószínú cukorbetegség")
+        st.success("Nem valószínű cukorbetegség")
